@@ -1,0 +1,8 @@
+lammps data file
+rect_GO.data
+gromacs .gro file
+rect_GO.gro
+gromacs .itp file
+rect_GO.itp
+gromacs atomtypes .itp file
+ff.itp
