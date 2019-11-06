@@ -1,0 +1,14 @@
+1 - if statement combing out repeated elements in dihedral list before printing,
+
+2 - changed the second [ dihedrals ] heading to [ impropers ]
+
+3 - changed dihedral list from 4 to 6 columns as by the R-B definition for Gmx/OPLS:
+	C_0 = V_0 + V_1 + 0.50d0 * (V_1 + V_3)
+	C_1 = 0.50d0 * (3V_3 - V_1)
+	C_2 = -V_2
+	C_3 = -2.0d0 * V_3
+	C_4 = 0.0d0
+	C_5 = 0.0d0		(note subscripts - code counts from 1, not 0)
+
+4 - printing [ defaults ] and [ atomtypes ] to `ff.itp` file and included OPLS definitions
+    of TIP3P water needed for solvation in GMX - as it doesn't read OPLS FF from library. 
