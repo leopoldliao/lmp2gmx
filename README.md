@@ -2,6 +2,6 @@
 
 User must specify input and output file names in `in.lmp2gmx` file. 
 
-##Authors 
+## Authors 
 **[Chris Lorenz](chris.lorenz@kcl.ac.uk)** 
 **[Mohamed Ali al-Badri](mohamed.al-badri@kcl.ac.uk)**
