@@ -22,7 +22,7 @@ c       License: GNU General Public License v3.0
       double precision dc(4,maxdtypes),dcn(4,maxdtypes),ic(2,maxitypes)
      
       dcn = 0.0d0 
-      open(2,file='in.convert_lammps_to_gromacs')
+      open(2,file='in.lmp2gmx')
       read(2,*) 
       read(2,*) fconfig
       read(2,*)
@@ -99,7 +99,7 @@ c       License: GNU General Public License v3.0
       write(12,*)
       write(12,'(i6)') natoms
       write(14,'(a16)') '[ moleculetype ]'
-      write(14,'(a4, i1)') 'GRAP',3
+      write(14,'(a4,tr1, i1)') 'GRAP',3
       write(14,*) 
       write(14,'(a9)') '[ atoms ]'
       do i = 1,natoms
@@ -192,7 +192,8 @@ c        Changed to R-B type dihedral:
       read(10,*)
       write(14,*)
       read(10,*)
-      write(14,'(a13)') '[ impropers ]'
+c       gmx names impropers 'dihedrals'      
+      write(14,'(a13)') '[ dihedrals ]'
       read(10,*)
       write(14,*)
       do i = 1,nimpropers
