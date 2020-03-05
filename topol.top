@@ -1,0 +1,14 @@
+;;
+;;
+; Include forcefield parameters
+#include "forcefield_files/ff.itp"
+#include "forcefield_files/min.itp"
+;#include "forcefield_files/tip3p.itp"
+
+[ system ]
+; Name
+GRAP
+
+[ molecules ]
+; Compound      #mols
+GRAP              1
