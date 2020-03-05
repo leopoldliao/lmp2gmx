@@ -13,13 +13,13 @@ c       License: GNU General Public License v3.0
       parameter (maxatypes=20,maxbtypes=20,maxantypes=50,maxdtypes=120)
       parameter (maxitypes=25,maxatoms=5000)
       character*5 atype,fftype(maxatypes)
-      character*80 fconfig,fgro,fitp,fff
+      character*80 fpairs,fconfig,fgro,fitp,fff
       integer natoms,nbonds,nangles,ndihedrals,nimpropers,natypes
       integer nbtypes,nantypes,ndtypes,nitypes,i,j,j1,j2,j3,j4
       integer atnum(maxatypes)
       double precision xlo,xhi,ylo,yhi,zlo,zhi,lx,ly,lz,mass(maxatypes)
       double precision pc(2,maxatypes),bc(2,maxbtypes),ac(2,maxantypes)
-      double precision dc(4,maxdtypes),dcn(4,maxdtypes),ic(2,maxitypes)
+      double precision dc(4,maxdtypes),dcn(5,maxdtypes),ic(2,maxitypes)
      
       dcn = 0.0d0 
       open(2,file='in.lmp2gmx')
@@ -29,6 +29,8 @@ c       License: GNU General Public License v3.0
       read(2,*) fgro
       read(2,*) 
       read(2,*) fitp
+      read(2,*)
+      read(2,*) fpairs
       read(2,*) 
       read(2,*) fff
       close(2)
@@ -36,6 +38,7 @@ c       License: GNU General Public License v3.0
       open(10,file=fconfig)
       open(12,file=fgro)
       open(14,file=fitp)
+      open(15,file=fpairs)
       open(16,file=fff)
      
       read(10,*) 
@@ -124,8 +127,9 @@ c       License: GNU General Public License v3.0
          end if
          write(14,'(i5,1x,a5,i5,1x,a4,a5,i5,2f10.6)') j,fftype(jt),jm,
      &    'GRAP',atype,j,qj,mass(jt)
-         write(12,'(i5,2a5,i5,3f8.3)') jm,'GRAP',atype,j,(xj/10.0d0),
-     &    (yj/10.0d0),(zj/10.0d0)
+         write(12,'(i5,2a5,i5,3f8.3)') jm,'GRAP',atype,j,
+     &    ((xj-xlo)/10.0d0),
+     &    ((yj-ylo)/10.0d0),((zj-zlo)/10.0d0)
       end do
       write(14,*)
       write(16,'(a12)') '[ defaults ]'
@@ -135,7 +139,7 @@ c       License: GNU General Public License v3.0
       write(16,*)
       do it = 1,natypes
          write(16,'(a5,i5,2f10.6,a3,2(1x,e13.7))') fftype(it),atnum(it)
-     &      ,mass(it),0.0d0,' A ',pc(2,it)/10.0d0,pc(1,it)*418.40d0
+     &      ,mass(it),0.0d0,' A ',pc(2,it)/10.0d0,pc(1,it)*4.1840d0
       end do
       write(16,'(a75)') 'opls_111   OW  8      9.95140    -0.834       A
      &    3.15061e-01  6.36386e-01'
@@ -163,30 +167,33 @@ c        check that the '1' is the right number for the functional form
          read(10,*) j,jt,j1,j2,j3
 c        check that '1' is the right number for the functional form
          write(14,'(3(i6,1x),i3,2(1x,e13.7))') j1,j2,j3,1,ac(2,jt),
-     &      ac(1,jt)*418.40d0
+     &      ac(1,jt)*4.1840d0
       end do
       read(10,*)
       write(14,*)
       read(10,*)
       write(14,'(a13)') '[ dihedrals ]'
+      write(15,'(a9)') '[ pairs ]'
       read(10,*)
       write(14,*)
       do i = 1,ndihedrals
           read(10,*) j,jt,j1,j2,j3,j4
+          write(15,'(2(i6,1x),i3)') j1,j4,1
 c         input correct functional form for the opls dihedrals
 c         Also I assume that the values for the different force
 c         constants are what found in the file for gromacs, check
 c         this --->
 c
 c        Changed to R-B type dihedral:
-         dcn(1,jt)= dc(1,jt) + (0.50d0*dc(2,jt)) + dc(3,jt)
-         dcn(2,jt)= (-0.50d0*dc(2,jt))
-         dcn(3,jt)= (-1.0d0*dc(3,jt))
-         dcn(4,jt)= (-2.0d0*dc(4,jt))
+c         dcn(1,jt)= dc(2,jt) + (0.50d0*(dc(1,jt) + dc(3,jt)))
+c         dcn(2,jt)= 0.50d0*((-1.0d0*dc(1,jt))+(3.0d0*dc(3,jt)))
+c         dcn(3,jt)= (-1.0d0*dc(2,jt))+(4.0d0*dc(4,jt))
+c         dcn(4,jt)= (-2.0d0*dc(3,jt))
+c         dcn(5,jt) = -4.0d0*dc(4,jt)
          if (j1 .ne. j2 .and. j1 .ne. j3 .and. j1 .ne. j4) then
-            write(14,'(4(i6,1x),i3,6(1x,e13.7))') j1,j2,j3,j4,3,
-     &        dcn(1,jt)*418.40d0,dcn(2,jt)*418.40d0,dcn(3,jt)*418.40d0,
-     &        dcn(4,jt)*418.40d0,0.0d0,0.0d0
+            write(14,'(4(i6,1x),i3,6(1x,e13.7))') j1,j2,j3,j4,5,
+     &        dc(1,jt)*4.1840d0,dc(2,jt)*4.1840d0,dc(3,jt)*4.1840d0,
+     &        dc(4,jt)*4.1840d0
          end if
       end do
       read(10,*)
@@ -200,11 +207,12 @@ c       gmx names impropers 'dihedrals'
          read(10,*) j,jt,j1,j2,j3,j4
          if (j1 .ne. j2 .and. j1 .ne. j3 .and. j1 .ne. j4) then
            write(14,'(4(i6,1x),i3,2(1x,e13.7))') j1,j2,j3,j4,2,
-     &          ic(2,jt),ic(1,jt)*418.40d0
+     &          ic(2,jt),ic(1,jt)*4.1840d0
          end if
       end do
       close(10)
       close(14)
+      close(15)
       close(12)
       close(16)
       end
