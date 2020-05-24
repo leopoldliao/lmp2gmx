@@ -179,17 +179,8 @@ c        check that '1' is the right number for the functional form
       do i = 1,ndihedrals
           read(10,*) j,jt,j1,j2,j3,j4
           write(15,'(2(i6,1x),i3)') j1,j4,1
-c         input correct functional form for the opls dihedrals
-c         Also I assume that the values for the different force
-c         constants are what found in the file for gromacs, check
-c         this --->
-c
-c        Changed to R-B type dihedral:
-c         dcn(1,jt)= dc(2,jt) + (0.50d0*(dc(1,jt) + dc(3,jt)))
-c         dcn(2,jt)= 0.50d0*((-1.0d0*dc(1,jt))+(3.0d0*dc(3,jt)))
-c         dcn(3,jt)= (-1.0d0*dc(2,jt))+(4.0d0*dc(4,jt))
-c         dcn(4,jt)= (-2.0d0*dc(3,jt))
-c         dcn(5,jt) = -4.0d0*dc(4,jt)
+c        This format (Fourier dihedral - C1,C2,C3,C4 (kJ/mol) has
+c           funct = 5:
          if (j1 .ne. j2 .and. j1 .ne. j3 .and. j1 .ne. j4) then
             write(14,'(4(i6,1x),i3,6(1x,e13.7))') j1,j2,j3,j4,5,
      &        dc(1,jt)*4.1840d0,dc(2,jt)*4.1840d0,dc(3,jt)*4.1840d0,
@@ -199,7 +190,7 @@ c         dcn(5,jt) = -4.0d0*dc(4,jt)
       read(10,*)
       write(14,*)
       read(10,*)
-c       gmx names impropers 'dihedrals'      
+c       gmx names impropers 'dihedrals', these are of funct=2  
       write(14,'(a13)') '[ dihedrals ]'
       read(10,*)
       write(14,*)
