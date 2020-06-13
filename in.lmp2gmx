@@ -1,10 +1,8 @@
 lammps data file
-min.data
+rect_GO.data
 gromacs .gro file
-min.gro
+rect_GO.gro
 gromacs .itp file
-min.itp
-gromacs pairs entry to copy into .itp file
-min_pairs.itp
+rect_GO.itp
 gromacs atomtypes .itp file
 ff.itp

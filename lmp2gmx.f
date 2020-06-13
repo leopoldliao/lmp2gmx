@@ -13,7 +13,7 @@ c       License: GNU General Public License v3.0
       parameter (maxatypes=20,maxbtypes=20,maxantypes=50,maxdtypes=120)
       parameter (maxitypes=25,maxatoms=5000)
       character*5 atype,fftype(maxatypes)
-      character*80 fpairs,fconfig,fgro,fitp,fff
+      character*80 fconfig,fgro,fitp,fff
       integer natoms,nbonds,nangles,ndihedrals,nimpropers,natypes
       integer nbtypes,nantypes,ndtypes,nitypes,i,j,j1,j2,j3,j4
       integer atnum(maxatypes)
@@ -29,8 +29,6 @@ c       License: GNU General Public License v3.0
       read(2,*) fgro
       read(2,*) 
       read(2,*) fitp
-      read(2,*)
-      read(2,*) fpairs
       read(2,*) 
       read(2,*) fff
       close(2)
@@ -38,7 +36,6 @@ c       License: GNU General Public License v3.0
       open(10,file=fconfig)
       open(12,file=fgro)
       open(14,file=fitp)
-      open(15,file=fpairs)
       open(16,file=fff)
      
       read(10,*) 
@@ -133,7 +130,7 @@ c       License: GNU General Public License v3.0
       end do
       write(14,*)
       write(16,'(a12)') '[ defaults ]'
-      write(16,'(2(i1,1x),a3,2(1x,f3.1))') 1,3,'yes',0.5,0.5
+      write(16,'(2(i1,1x),a3,2(1x,f3.1))') 1,3,'yes',1.0,1.0
       write(16,*)
       write(16,'(a13)') '[ atomtypes ]'
       write(16,*)
@@ -141,10 +138,10 @@ c       License: GNU General Public License v3.0
          write(16,'(a5,i5,2f10.6,a3,2(1x,e13.7))') fftype(it),atnum(it)
      &      ,mass(it),0.0d0,' A ',pc(2,it)/10.0d0,pc(1,it)*4.1840d0
       end do
-      write(16,'(a75)') 'opls_111   OW  8      9.95140    -0.834       A
+      write(16,'(a75)') 'opls_111   OW  8     15.99940    -0.834       A
      &    3.15061e-01  6.36386e-01'
-      write(16,'(a75)') 'opls_112   HW  1      4.03200     0.417       A
-     &    0.00000e+00  0.00001e+00'
+      write(16,'(a75)') 'opls_112   HW  1      1.00800     0.417       A 
+     &    4.00013524445e-02 1.924640e-01'
       write(12,'(3f10.5)') lx/10.0d0,ly/10.0d0,lz/10.0d0 
       read(10,*)
       write(14,*)
@@ -173,12 +170,10 @@ c        check that '1' is the right number for the functional form
       write(14,*)
       read(10,*)
       write(14,'(a13)') '[ dihedrals ]'
-      write(15,'(a9)') '[ pairs ]'
       read(10,*)
       write(14,*)
       do i = 1,ndihedrals
           read(10,*) j,jt,j1,j2,j3,j4
-          write(15,'(2(i6,1x),i3)') j1,j4,1
 c        This format (Fourier dihedral - C1,C2,C3,C4 (kJ/mol) has
 c           funct = 5:
          if (j1 .ne. j2 .and. j1 .ne. j3 .and. j1 .ne. j4) then
@@ -203,7 +198,6 @@ c       gmx names impropers 'dihedrals', these are of funct=2
       end do
       close(10)
       close(14)
-      close(15)
       close(12)
       close(16)
       end
